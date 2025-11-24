@@ -3,6 +3,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useAppDispatch } from '@/store/hooks';
 import { setTokens } from '@/store/slices/tokensSlice';
 import { setLoading, setError } from '@/store/slices/uiSlice';
@@ -47,16 +48,23 @@ export function useTokenData(
         queryFn: () => fetchTokens(section, preset, search),
         refetchInterval: REFETCH_INTERVAL,
         staleTime: 10000, // Consider data stale after 10 seconds
-        onSuccess: (data) => {
-            dispatch(setTokens({ section, tokens: data }));
-            dispatch(setLoading({ section: getSectionKey(section), loading: false }));
-            dispatch(setError({ section: getSectionKey(section), error: null }));
-        },
-        onError: (error: Error) => {
-            dispatch(setLoading({ section: getSectionKey(section), loading: false }));
-            dispatch(setError({ section: getSectionKey(section), error: error.message }));
-        },
     });
+
+    // Handle success and error states with useEffect (React Query v5)
+    useEffect(() => {
+        const sectionKey = getSectionKey(section);
+
+        if (query.isSuccess && query.data) {
+            dispatch(setTokens({ section, tokens: query.data }));
+            dispatch(setLoading({ section: sectionKey, loading: false }));
+            dispatch(setError({ section: sectionKey, error: null }));
+        }
+
+        if (query.isError) {
+            dispatch(setLoading({ section: sectionKey, loading: false }));
+            dispatch(setError({ section: sectionKey, error: query.error?.message || 'Failed to fetch tokens' }));
+        }
+    }, [query.isSuccess, query.isError, query.data, query.error, section, dispatch]);
 
     return query;
 }
