@@ -4,6 +4,7 @@
 
 'use client';
 
+import { motion } from 'framer-motion';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setPresetFilter, setSearchFilter } from '@/store/slices/tokensSlice';
 import { TokenSection as TokenSectionEnum, PresetFilter } from '@/lib/types';
@@ -47,8 +48,36 @@ export function TokenSection({ section }: TokenSectionProps) {
                 : 'MIGRATED'
     ];
 
+    // Animation variants
+    const containerVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                when: "beforeChildren",
+                staggerChildren: 0.05
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, x: -10 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: { duration: 0.3 }
+        }
+    };
+
     return (
-        <div className="flex flex-col h-full bg-background-secondary rounded-lg overflow-hidden">
+        <motion.div
+            className="flex flex-col h-full bg-background-secondary rounded-lg overflow-hidden"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
             <SectionHeader
                 title={sectionInfo.label}
                 activePreset={activePreset}
@@ -74,15 +103,28 @@ export function TokenSection({ section }: TokenSectionProps) {
                         ))}
                     </>
                 ) : tokens.length > 0 ? (
-                    tokens.map((token) => (
-                        <TokenRow key={token.id} token={token} />
+                    tokens.map((token, index) => (
+                        <motion.div
+                            key={token.id}
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            transition={{ delay: index * 0.05 }}
+                        >
+                            <TokenRow token={token} />
+                        </motion.div>
                     ))
                 ) : (
-                    <div className="flex items-center justify-center h-40 text-text-muted">
+                    <motion.div
+                        className="flex items-center justify-center h-40 text-text-muted"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                    >
                         No tokens found
-                    </div>
+                    </motion.div>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 }

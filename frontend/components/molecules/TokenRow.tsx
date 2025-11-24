@@ -4,6 +4,7 @@
 
 'use client';
 
+import { motion } from 'framer-motion';
 import { memo } from 'react';
 import { Token } from '@/lib/types';
 import { formatNumber, formatPrice, formatPercentage, getPercentageColor, cn } from '@/lib/utils';
@@ -15,12 +16,18 @@ interface TokenRowProps {
 
 export const TokenRow = memo(function TokenRow({ token, onClick }: TokenRowProps) {
     return (
-        <div
+        <motion.div
             className={cn(
                 'grid grid-cols-6 gap-2 p-3 border-b border-background-tertiary/30',
-                'hover:bg-background-tertiary/20 transition-colors duration-150 cursor-pointer'
+                'cursor-pointer'
             )}
             onClick={() => onClick?.(token)}
+            whileHover={{
+                scale: 1.01,
+                backgroundColor: 'rgba(31, 41, 55, 0.3)',
+                transition: { duration: 0.2 }
+            }}
+            whileTap={{ scale: 0.99 }}
         >
             {/* Token Name & Symbol */}
             <div className="col-span-2 flex flex-col">
@@ -49,6 +56,6 @@ export const TokenRow = memo(function TokenRow({ token, onClick }: TokenRowProps
             <div className={cn('text-right text-sm font-medium', getPercentageColor(token.priceChange))}>
                 {formatPercentage(token.priceChange)}
             </div>
-        </div>
+        </motion.div>
     );
 });

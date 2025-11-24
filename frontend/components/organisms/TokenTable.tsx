@@ -4,20 +4,51 @@
 
 'use client';
 
+import { motion } from 'framer-motion';
 import { TokenSection } from './TokenSection';
 import { TokenSection as TokenSectionEnum } from '@/lib/types';
 
 export function TokenTable() {
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.15
+            }
+        }
+    };
+
+    const sectionVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.6, ease: "easeOut" }
+        }
+    };
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[calc(100vh-200px)] p-4">
+        <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[calc(100vh-200px)] p-4"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
             {/* New Pairs Section */}
-            <TokenSection section={TokenSectionEnum.NEW_PAIRS} />
+            <motion.div variants={sectionVariants}>
+                <TokenSection section={TokenSectionEnum.NEW_PAIRS} />
+            </motion.div>
 
             {/* Final Stretch Section */}
-            <TokenSection section={TokenSectionEnum.FINAL_STRETCH} />
+            <motion.div variants={sectionVariants}>
+                <TokenSection section={TokenSectionEnum.FINAL_STRETCH} />
+            </motion.div>
 
             {/* Migrated Section */}
-            <TokenSection section={TokenSectionEnum.MIGRATED} />
-        </div>
+            <motion.div variants={sectionVariants}>
+                <TokenSection section={TokenSectionEnum.MIGRATED} />
+            </motion.div>
+        </motion.div>
     );
 }
