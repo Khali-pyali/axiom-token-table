@@ -6,7 +6,7 @@
 
 import { memo } from 'react';
 import { Token } from '@/lib/types';
-import { formatNumber, formatPrice, formatPercentage, formatTimeSince, getPercentageColor, cn } from '@/lib/utils';
+import { formatNumber, formatPrice, formatPercentage, getPercentageColor, cn } from '@/lib/utils';
 
 interface TokenRowProps {
     token: Token;
